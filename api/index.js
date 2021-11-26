@@ -10,16 +10,28 @@ const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
 const cors = require("cors");
+// const { createProxyMiddleware } = require('http-proxy-middleware');
 
 
+app.use(cors());
+
+app.all('*', function (req, res, next) {
+  var origin = req.get('origin');
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
+
+const MONGO_URI = 'mongodb+srv://sushil:sushil123@cluster0.lktg4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => console.log("DB Connection Successfull!"))
   .catch((err) => {
     console.log(err);
   });
 
-app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
